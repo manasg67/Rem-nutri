@@ -14,19 +14,18 @@ const OrderDetails = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
-      <ScrollView contentContainerStyle={{ padding: moderateScale(20) }}>
-        
-        <View style={{ marginBottom: moderateScale(20) }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: moderateScaleVertical(10) }}>
+       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: moderateScaleVertical(10),margin:moderateScaleVertical(10) }}>
             <TouchableOpacity>
               <Image source={require('./assets/left-arrow.png')} style={{ height: moderateScaleVertical(20), width: moderateScale(30) }} />
             </TouchableOpacity>
-            <Text style={{ fontSize: 24, fontWeight: 'bold', marginLeft: moderateScale(70) }}>Order Details</Text>
+            <Text style={{ fontSize: 20, fontWeight: '600', marginLeft: moderateScale(90) }}>Order Details</Text>
           </View>
+      <ScrollView contentContainerStyle={{ padding: moderateScale(20) }}>
+         <View style={{ marginBottom: moderateScale(20) }}>
           <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: moderateScaleVertical(10) }}>Cart Items</Text>
           {[0, 1].map((item, index) => (
-            <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: moderateScale(20) }}>
-              <Image source={require('./assets/lorem.jpg')} style={{ width: moderateScale(70), height: moderateScale(70), marginRight: moderateScale(10) }} />
+            <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: moderateScale(20),borderBottomWidth:moderateScale(0.5),paddingBottom:moderateScaleVertical(30)}}>
+            <Image source={require('./assets/lorem.jpg')} style={{ width: moderateScale(70), height: moderateScale(70), marginRight: moderateScale(10) }} />
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Lorem Ipsum</Text>
                 <Text style={{ fontSize: 16, color: 'rgba(252, 180, 75, 1)', fontWeight: '600', marginTop: moderateScale(10) }}>₹299</Text>
