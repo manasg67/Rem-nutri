@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
 import { moderateScale, moderateScaleVertical } from './src/styles/responsiveSize';
+import { useState } from 'react';
 
 const OrderDetails = () => {
   const [quantities, setQuantities] = useState([1, 1]);
@@ -51,17 +52,28 @@ const OrderDetails = () => {
 
         <View style={{ backgroundColor: '#FFF', padding: moderateScale(20), borderRadius: 10, marginBottom: moderateScale(20) }}>
           <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: moderateScaleVertical(10) }}>Delivery Details</Text>
-          <View style={{ borderWidth: 0.5, borderRadius: 10, padding: 10 }}>
-            <Text style={{ marginBottom: moderateScaleVertical(5) }}>Expected delivery on 06-08-2024</Text>
+          <View style={{ borderWidth: 0.5, borderRadius: 10, padding: 10 ,flexDirection:'row' ,alignItems:'center'}}>
+            <Image source={require('./assets/fast-delivery.png')} style={{height:moderateScaleVertical(40),width:moderateScale(30),tintColor:'rgba(218, 152, 55, 1)'}}/>
+            <Text style={{marginLeft:moderateScale(20), marginBottom: moderateScaleVertical(5), fontSize: 15, fontWeight: '500' }}>Expected delivery on 06-08-2024</Text>
           </View>
-          <TouchableOpacity style={{ borderWidth: 0.5, borderRadius: 10, padding: 10, marginTop: moderateScaleVertical(10) }}>
-            <Text style={{ marginBottom: moderateScaleVertical(5), fontSize: 17, fontWeight: '600' }}>Home</Text>
-            <Text style={{ marginBottom: moderateScaleVertical(5) }}>301, JSR Enclave, Danvaipetapuram</Text>
-            <Text>Lorem Ipsum Lorem Dolor Sit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{ borderWidth: 0.5, borderRadius: 10, padding: 10, marginTop: moderateScaleVertical(10) }}>
+          
+          <TouchableOpacity
+        style={{ borderWidth:moderateScale(0.5),alignItems:'center', borderRadius: 10, padding: 10, marginTop: moderateScaleVertical(20), flexDirection:'row' ,height:moderateScaleVertical(80),width:'100%' }}
+        >
+          
+            <Image source={require('./assets/home.png')} style={{height:moderateScaleVertical(30),width:moderateScale(30),tintColor:'rgba(218, 152, 55, 1)'}}/>
+          <View style={{marginLeft:moderateScale(20)}}>
+          <Text style={{ marginBottom: 5, fontSize: 17, fontWeight: '600' }}>Home</Text>
+        <Text>301, JSR Enclave, Danvaipetapuram</Text>
+        <Text>Lorem Ipsum Lorem Dolor Sit</Text>
+            </View>
+      </TouchableOpacity>
+          <TouchableOpacity style={{ borderWidth:moderateScale(0.5),alignItems:'center', borderRadius: 10, padding: 10, marginTop: moderateScaleVertical(20), flexDirection:'row' ,height:moderateScaleVertical(70),width:'100%' }} >
+          <Image source={require('./assets/phone.png')} style={{height:moderateScaleVertical(30),width:moderateScale(30),tintColor:'rgba(218, 152, 55, 1)'}}/>
+          <View style={{marginLeft:moderateScale(20)}}>
             <Text style={{ marginBottom: moderateScaleVertical(5), fontSize: 17, fontWeight: '600' }}>Riya</Text>
             <Text>+91 1234567891</Text>
+            </View>
           </TouchableOpacity>
         </View>
         
