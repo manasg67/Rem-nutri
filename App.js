@@ -57,8 +57,8 @@ const App = () => {
           <Image source={require('./assets/fi-ss-marker.png')} style={{ height: moderateScaleVertical(30), width: moderateScale(30), tintColor: 'rgba(90, 58, 137, 1)' }} />
           <View style={{ marginLeft: moderateScale(20) }}>
             <Text style={{ marginBottom: 5, fontSize: 17, fontWeight: '600' }}>Home</Text>
-            <Text>301, JSR Enclave, Danvaipetapuram</Text>
-            <Text>Lorem Ipsum Lorem Dolor Sit</Text>
+            <Text>301, JSR Enclave, Danvaipetapuram Lorem Ipsum Lorem Dolor Si</Text>
+            <Text>t</Text>
           </View>
         </View>
         <TouchableOpacity style={{ backgroundColor: 'rgba(90, 58, 137, 1)', width: moderateScale(250), padding: moderateScale(15), borderRadius: 10, alignSelf: 'center' }}>

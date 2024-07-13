@@ -1,7 +1,7 @@
 import { View, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import React, { useState } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { moderateScale, moderateScaleVertical } from './src/styles/responsiveSize';
+import { moderateScale, moderateScaleVertical } from '../styles/responsiveSize';
 
 const App = () => {
   const [state, setState] = useState({
@@ -37,7 +37,7 @@ const App = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: moderateScaleVertical(10), margin: moderateScaleVertical(10) }}>
         <TouchableOpacity>
-          <Image source={require('./assets/left-arrow.png')} style={{ height: moderateScaleVertical(20), width: moderateScale(30) }} />
+          {/* <Image source={require('./assets/left-arrow.png')} style={{ height: moderateScaleVertical(20), width: moderateScale(30) }} /> */}
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: '500', marginLeft: moderateScale(90) }}>Select location</Text>
       </View>
@@ -54,7 +54,7 @@ const App = () => {
       </MapView>
       <View style={{ flexDirection: 'column', margin: moderateScale(15) }}>
         <View style={{ flexDirection: 'row', marginBottom: moderateScaleVertical(10) }}>
-          <Image source={require('./assets/fi-ss-marker.png')} style={{ height: moderateScaleVertical(30), width: moderateScale(30), tintColor: 'rgba(90, 58, 137, 1)' }} />
+          {/* <Image source={require('./assets/fi-ss-marker.png')} style={{ height: moderateScaleVertical(30), width: moderateScale(30), tintColor: 'rgba(90, 58, 137, 1)' }} /> */}
           <View style={{ marginLeft: moderateScale(20) }}>
             <Text style={{ marginBottom: 5, fontSize: 17, fontWeight: '600' }}>Home</Text>
             <Text>301, JSR Enclave, Danvaipetapuram</Text>
