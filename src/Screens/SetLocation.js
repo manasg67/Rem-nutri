@@ -1,5 +1,5 @@
-import { View, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
+import { View, Text, SafeAreaView, TouchableOpacity, Image, TextInput } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import Geocoder from 'react-native-geocoding';
 import { moderateScale, moderateScaleVertical } from './src/styles/responsiveSize';
@@ -15,42 +15,85 @@ const App = () => {
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
     },
-    pickupcords: {
+    pickupCoords: {
       latitude: 19.3919,
       longitude: 72.8397,
     },
     address: 'Fetching address...',
+    typedAddress: '',
   });
 
-  const { region, pickupcords, address } = state;
+  const { region, pickupCoords, address, typedAddress } = state;
+
+  useEffect(() => {
+    fetchAddressFromCoords(pickupCoords.latitude, pickupCoords.longitude);
+  }, [pickupCoords]);
 
   const onRegionChangeComplete = (newRegion) => {
     setState((prevState) => ({
       ...prevState,
       region: newRegion,
-      pickupcords: {
+      pickupCoords: {
         latitude: newRegion.latitude,
-        longitude: newRegion.longitude
-      }
+        longitude: newRegion.longitude,
+      },
     }));
-    fetchAddress(newRegion.latitude, newRegion.longitude);
+    fetchAddressFromCoords(newRegion.latitude, newRegion.longitude);
   };
 
-  const fetchAddress = (latitude, longitude) => {
+  const fetchAddressFromCoords = (latitude, longitude) => {
     Geocoder.from(latitude, longitude)
-      .then(json => {
-        const addressComponent = json.results[0].formatted_address;
-        setState((prevState) => ({
-          ...prevState,
-          address: addressComponent
-        }));
+      .then((json) => {
+        if (json.results && json.results.length > 0) {
+          const addressComponent = json.results[0].formatted_address;
+          setState((prevState) => ({
+            ...prevState,
+            address: addressComponent,
+          }));
+        } else {
+          console.warn('No results found for the coordinates.');
+          // Optionally handle the case where no results are found
+        }
       })
-      .catch(error => console.warn(error));
+      .catch((error) => {
+        console.warn('Error fetching geocoding data:', error);
+        // Optionally handle the error (e.g., show a user-friendly message)
+      });
   };
 
-  useEffect(() => {
-    fetchAddress(pickupcords.latitude, pickupcords.longitude);
-  }, [pickupcords]);
+  const handleAddressInputChange = (text) => {
+    setState((prevState) => ({
+      ...prevState,
+      typedAddress: text,
+    }));
+  };
+
+  const handleSearchAddress = () => {
+    if (typedAddress.trim() === '') return;
+
+    Geocoder.from(typedAddress)
+      .then((json) => {
+        if (json.results && json.results.length > 0) {
+          const { lat, lng } = json.results[0].geometry.location;
+          setState((prevState) => ({
+            ...prevState,
+            pickupCoords: {
+              latitude: lat,
+              longitude: lng,
+            },
+            address: typedAddress,
+            typedAddress: '',
+          }));
+        } else {
+          console.warn('No results found for the address.');
+          // Optionally handle the case where no results are found
+        }
+      })
+      .catch((error) => {
+        console.warn('Error fetching geocoding data:', error);
+        // Optionally handle the error (e.g., show a user-friendly message)
+      });
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
@@ -65,16 +108,28 @@ const App = () => {
         initialRegion={region}
         onRegionChangeComplete={onRegionChangeComplete}
       >
-        <Marker
-          coordinate={pickupcords}
+                <View style={{ marginTop: moderateScaleVertical(10), elevation: 1,flexDirection:'row' ,alignItems:'center'}}>
+          <TextInput
+            style={{ borderWidth: 1, borderColor: '#CCC', borderRadius: 5, padding: 10, marginBottom:moderateScaleVertical(20), backgroundColor: 'rgba(255, 255, 255, 1)', marginTop: moderateScaleVertical(20), width: moderateScale(310),marginLeft: moderateScaleVertical(10) }}
+            placeholder="Enter Address"
+            value={typedAddress}
+            onChangeText={handleAddressInputChange}
+          />
+          <TouchableOpacity onPress={handleSearchAddress} style={{  borderRadius:10,width:moderateScale(40),height:moderateScaleVertical(40),backgroundColor:'rgba(255, 255, 255, 1)',borderWidth: 1, borderColor: '#CCC' }}>
+          <Image source={require('./assets/search.png')} style={{ height: moderateScaleVertical(25), width: moderateScale(25) ,marginTop:moderateScaleVertical(5),marginLeft:moderateScale(5)}} />
+          </TouchableOpacity>
+        </View>
+             <Marker
+          coordinate={pickupCoords}
           title={address}
           description='customer'
           pinColor='rgba(90, 58, 137, 1)'
           identifier='origin'
         />
+
       </MapView>
-      <View style={{ flexDirection: 'column', margin: moderateScale(15) }}>
-        <View style={{ flexDirection: 'row', marginBottom: moderateScaleVertical(10) }}>
+      <View style={{ flexDirection: 'column',backgroundColor:'rgba(255, 255, 255, 1)' }}>
+        <View style={{ marginTop:moderateScaleVertical(10),flexDirection: 'row', marginBottom: moderateScaleVertical(10) }}>
           <Image source={require('./assets/fi-ss-marker.png')} style={{ height: moderateScaleVertical(30), width: moderateScale(30), tintColor: 'rgba(90, 58, 137, 1)' }} />
           <View style={{ marginLeft: moderateScale(20), marginRight: moderateScale(30) }}>
             <Text style={{ marginBottom: 5, fontSize: 17, fontWeight: '600' }}>Home</Text>
@@ -92,3 +147,4 @@ const App = () => {
 }
 
 export default App;
+
