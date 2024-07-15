@@ -1,28 +1,98 @@
-import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, TextInput, Image, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, SafeAreaView, TouchableOpacity, Image, TextInput } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
+import Geocoder from 'react-native-geocoding';
 import { moderateScale, moderateScaleVertical } from './src/styles/responsiveSize';
 
-const OrderDetails = () => {
-  const [quantities, setQuantities] = useState([1, 1]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [newAddress, setNewAddress] = useState('');
-  const [phone, setPhone] = useState('');
-  const [name, setname] = useState('');
-  const [addresses, setAddresses] = useState([
-    { id: 1, name: 'Home', address: '301, JSR Enclave, Danvaipetapuram', description: 'Lorem Ipsum Lorem Dolor Sit', phone: '+91 9123456789' },
-    { id: 2, name: 'Office', address: '302, JSR Enclave, Danvaipetapuram', description: 'Lorem Ipsum Lorem Dolor Sit', phone: '+91 9876543210' },
-  ]);
+// Initialize the Geocoder with your Google Maps API key
+Geocoder.init('YOUR_GOOGLE_MAPS_API_KEY');
 
-  const handleQuantityChange = (index, change) => {
-    const newQuantities = [...quantities];
-    newQuantities[index] = Math.max(1, newQuantities[index] + change); // Ensure quantity doesn't go below 1
-    setQuantities(newQuantities);
+const App = () => {
+  const [state, setState] = useState({
+    region: {
+      latitude: 19.3919,
+      longitude: 72.8397,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    },
+    pickupCoords: {
+      latitude: 19.3919,
+      longitude: 72.8397,
+    },
+    address: 'Fetching address...',
+    typedAddress: '',
+  });
+
+  const { region, pickupCoords, address, typedAddress } = state;
+
+  useEffect(() => {
+    fetchAddressFromCoords(pickupCoords.latitude, pickupCoords.longitude);
+  }, [pickupCoords]);
+
+  const onRegionChangeComplete = (newRegion) => {
+    setState((prevState) => ({
+      ...prevState,
+      region: newRegion,
+      pickupCoords: {
+        latitude: newRegion.latitude,
+        longitude: newRegion.longitude,
+      },
+    }));
+    fetchAddressFromCoords(newRegion.latitude, newRegion.longitude);
   };
 
-  const handleAddAddress = () => {
-    setAddresses([...addresses, { id: Date.now(), name: name, address: newAddress, description: 'Description', phone: phone }]);
-    setNewAddress('');
-    setModalVisible(false);
+  const fetchAddressFromCoords = (latitude, longitude) => {
+    Geocoder.from(latitude, longitude)
+      .then((json) => {
+        if (json.results && json.results.length > 0) {
+          const addressComponent = json.results[0].formatted_address;
+          setState((prevState) => ({
+            ...prevState,
+            address: addressComponent,
+          }));
+        } else {
+          console.warn('No results found for the coordinates.');
+          // Optionally handle the case where no results are found
+        }
+      })
+      .catch((error) => {
+        console.warn('Error fetching geocoding data:', error);
+        // Optionally handle the error (e.g., show a user-friendly message)
+      });
+  };
+
+  const handleAddressInputChange = (text) => {
+    setState((prevState) => ({
+      ...prevState,
+      typedAddress: text,
+    }));
+  };
+
+  const handleSearchAddress = () => {
+    if (typedAddress.trim() === '') return;
+
+    Geocoder.from(typedAddress)
+      .then((json) => {
+        if (json.results && json.results.length > 0) {
+          const { lat, lng } = json.results[0].geometry.location;
+          setState((prevState) => ({
+            ...prevState,
+            pickupCoords: {
+              latitude: lat,
+              longitude: lng,
+            },
+            address: typedAddress,
+            typedAddress: '',
+          }));
+        } else {
+          console.warn('No results found for the address.');
+          // Optionally handle the case where no results are found
+        }
+      })
+      .catch((error) => {
+        console.warn('Error fetching geocoding data:', error);
+        // Optionally handle the error (e.g., show a user-friendly message)
+      });
   };
 
   return (
@@ -31,89 +101,50 @@ const OrderDetails = () => {
         <TouchableOpacity>
           <Image source={require('./assets/left-arrow.png')} style={{ height: moderateScaleVertical(20), width: moderateScale(30) }} />
         </TouchableOpacity>
-        <Text style={{ fontSize: 20, fontWeight: '600', marginLeft: moderateScale(90) }}>Order Details</Text>
+        <Text style={{ fontSize: 20, fontWeight: '500', marginLeft: moderateScale(90) }}>Select location</Text>
       </View>
-      <ScrollView contentContainerStyle={{ padding: moderateScale(20), paddingBottom: moderateScale(80),height:'100%'}}>
-        <View style={{ marginBottom: moderateScale(20) }}>
-          <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: moderateScaleVertical(10), marginTop: moderateScaleVertical(20) }}>Cart Items</Text>
-          {[0, 1].map((item, index) => (
-            <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: moderateScale(20), borderBottomWidth: moderateScale(0.5), paddingBottom: moderateScaleVertical(30) }}>
-              <Image source={require('./assets/lorem.jpg')} style={{ width: moderateScale(70), height: moderateScale(70), marginRight: moderateScale(10) }} />
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Lorem Ipsum</Text>
-                <Text style={{ fontSize: 16, color: 'rgba(150, 99, 23, 1)', fontWeight: '600', marginTop: moderateScale(10) }}>₹299</Text>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <TouchableOpacity
-                  style={{ padding: moderateScale(5), borderColor: 'rgba(150, 99, 23, 1)', borderWidth: 1, borderRadius: 4 }}
-                  onPress={() => handleQuantityChange(index, -1)}
-                >
-                  <Text style={{ color: '#000', fontSize: 20, fontWeight: '500' }}>-</Text>
-                </TouchableOpacity>
-                <Text style={{ marginHorizontal: moderateScale(10) }}>{quantities[index]}</Text>
-                <TouchableOpacity
-                  style={{ padding: moderateScale(5), borderColor: 'rgba(90, 58, 137, 1)', borderWidth: 1, borderRadius: 4 }}
-                  onPress={() => handleQuantityChange(index, 1)}
-                >
-                  <Text style={{ color: '#000', fontSize: 20, fontWeight: '500' }}>+</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
+      <MapView
+        style={{ height: moderateScaleVertical(556) }}
+        initialRegion={region}
+        onRegionChangeComplete={onRegionChangeComplete}
+      >
+                <View style={{ marginTop: moderateScaleVertical(10), elevation: 1,flexDirection:'row' ,alignItems:'center'}}>
+          <TextInput
+            style={{ borderWidth: 1, borderColor: '#CCC', borderRadius: 5, padding: 10, marginBottom:moderateScaleVertical(20), backgroundColor: 'rgba(255, 255, 255, 1)', marginTop: moderateScaleVertical(20), width: moderateScale(310),marginLeft: moderateScaleVertical(10) }}
+            placeholder="Enter Address"
+            value={typedAddress}
+            onChangeText={handleAddressInputChange}
+          />
+          <TouchableOpacity onPress={handleSearchAddress} style={{  borderRadius:10,width:moderateScale(40),height:moderateScaleVertical(40),backgroundColor:'rgba(255, 255, 255, 1)',borderWidth: 1, borderColor: '#CCC' }}>
+          <Image source={require('./assets/search.png')} style={{ height: moderateScaleVertical(25), width: moderateScale(25) ,marginTop:moderateScaleVertical(5),marginLeft:moderateScale(5)}} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={{ backgroundColor: 'rgba(90, 58, 137, 1)', width: moderateScale(250), padding: moderateScale(15), borderRadius: 10, marginTop: moderateScaleVertical(20), alignSelf: 'center', position: 'absolute', bottom: 10 }}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={{ color: '#FFF', fontSize: 16, fontWeight: 'bold', alignSelf: 'center' }}>Add Address</Text>
-        </TouchableOpacity>
-      </ScrollView>
+             <Marker
+          coordinate={pickupCoords}
+          title={address}
+          description='customer'
+          pinColor='rgba(90, 58, 137, 1)'
+          identifier='origin'
+        />
 
-      <Modal animationType="slide" transparent={true} visible={modalVisible} >
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)'}}>
-          <View style={{ width: '100%', backgroundColor: '#FFF', padding: 20, borderRadius: 10 ,height:"70%",position:'absolute',bottom:moderateScaleVertical(0)}}>
-            <ScrollView style={{ maxHeight: 200, marginBottom: 20 }}>
-              {addresses.map((address) => (
-                <View key={address.id} style={{ zIndex:100,marginBottom: 10,flexDirection:'row' ,gap:moderateScale(10),borderWidth:moderateScale(0.5) ,padding:moderateScale(10)}}>
-                  <Image source={require('./assets/home.png')} style={{ height: moderateScaleVertical(30), width: moderateScale(30), tintColor: 'rgba(218, 152, 55, 1)' }} />
-                  <View style={{gap:moderateScaleVertical(10)}}>
-                  <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{address.name}</Text>
-                  <Text style={{ fontSize: 14, color: '#333' }}>{address.address}</Text>
-                  <Text style={{ fontSize: 14, color: '#333' }}>{address.phone}</Text>
-                  </View>
-                </View>
-              ))}
-            </ScrollView>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 20 }}>Add New Address</Text>
-            <TextInput
-              style={{ borderWidth: 1, borderColor: '#CCC', borderRadius: 5, padding: 10, marginBottom: 20 }}
-              placeholder="Enter name"
-              value={name}
-              onChangeText={setname}
-            />
-            <TextInput
-              style={{ borderWidth: 1, borderColor: '#CCC', borderRadius: 5, padding: 10, marginBottom: 20 }}
-              placeholder="Enter address"
-              value={newAddress}
-              onChangeText={setNewAddress}
-            />
-             <TextInput
-              style={{ borderWidth: 1, borderColor: '#CCC', borderRadius: 5, padding: 10, marginBottom: 20 }}
-              placeholder="Enter phone"
-              value={phone}
-              onChangeText={setPhone}
-            />
-            <TouchableOpacity onPress={handleAddAddress} style={{ backgroundColor: 'rgba(90, 58, 137, 1)', padding: 15, borderRadius: 5, alignItems: 'center' }}>
-              <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Save</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 10, alignItems: 'center' }}>
-              <Text style={{ color: '#000', fontWeight: 'bold' }}>Cancel</Text>
-            </TouchableOpacity>
+      </MapView>
+      <View style={{ flexDirection: 'column',backgroundColor:'rgba(255, 255, 255, 1)' }}>
+        <View style={{ marginTop:moderateScaleVertical(10),flexDirection: 'row', marginBottom: moderateScaleVertical(10) }}>
+          <Image source={require('./assets/fi-ss-marker.png')} style={{ height: moderateScaleVertical(30), width: moderateScale(30), tintColor: 'rgba(90, 58, 137, 1)' }} />
+          <View style={{ marginLeft: moderateScale(20), marginRight: moderateScale(30) }}>
+            <Text style={{ marginBottom: 5, fontSize: 17, fontWeight: '600' }}>Home</Text>
+            <Text>{address}</Text>
           </View>
         </View>
-      </Modal>
+        <View style={{marginTop:moderateScaleVertical(10),elevation:1,}}>
+        <TouchableOpacity style={{ backgroundColor: 'rgba(90, 58, 137, 1)', width: moderateScale(250), padding: moderateScale(15), borderRadius: 10, alignSelf: 'center' }}>
+          <Text style={{ color: '#FFF', fontSize: 16, fontWeight: 'bold', alignSelf: 'center' }}>Add Address</Text>
+        </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
-};
+}
 
-export default OrderDetails;
+export default App;
+
