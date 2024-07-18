@@ -138,8 +138,8 @@ const App = () => {
           identifier='origin'
         />
       </MapView>
-      <View style={{ flexDirection: 'column', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-        <View style={{ marginTop: moderateScaleVertical(10), flexDirection: 'row', marginBottom: moderateScaleVertical(10) }}>
+      <View style={{ flexDirection: 'column', backgroundColor: 'rgba(255, 255, 255, 1)',height:'100%'}}>
+        <View style={{ marginTop: moderateScaleVertical(10), flexDirection: 'row', marginBottom: moderateScaleVertical(10),marginLeft:moderateScale(20) }}>
           <Image source={require('./assets/fi-ss-marker.png')} style={{ height: moderateScaleVertical(30), width: moderateScale(30), tintColor: 'rgba(90, 58, 137, 1)' }} />
           <View style={{ marginLeft: moderateScale(20), marginRight: moderateScale(30) }}>
             <Text style={{ marginBottom: 5, fontSize: 17, fontWeight: '600' }}>Home</Text>
@@ -162,14 +162,12 @@ const App = () => {
       <Modal animationType="slide" transparent={true} visible={modalVisible} >
     
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)'}}>
-        <View style={{ position:'absolute',top:200}}>
+        <View style={{ position:'absolute' }}>
            <TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 10, alignItems: 'center'  }}>
            <Image source={require('./assets/cancel.png')} style={{ height: moderateScaleVertical(30), width: moderateScale(30), tintColor: 'white' }} />
             </TouchableOpacity>
         </View>
-          <View style={{ width: '100%', backgroundColor: '#FFF', padding: 20, borderRadius: 10 ,height:"70%",position:'absolute',bottom:moderateScaleVertical(0)}}>
-           
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 20 }}>Add New Address</Text>
+          <View style={{ width: '100%', backgroundColor: '#FFF', padding: 20, borderRadius: 10 ,height:"45%",position:'absolute',bottom:moderateScaleVertical(0)}}>
             <TextInput
               style={{ borderWidth: 1, borderColor: '#CCC', borderRadius: 5, padding: 10, marginBottom: 20 }}
               placeholder="Enter name"
@@ -184,7 +182,7 @@ const App = () => {
             />
              <TextInput
               style={{ borderWidth: 1, borderColor: '#CCC', borderRadius: 5, padding: 10, marginBottom: 20 }}
-              placeholder="Enter phone"
+              placeholder="Enter Contact Number"
               value={phone}
               onChangeText={setPhone}
             />
@@ -194,7 +192,7 @@ const App = () => {
               value={phone}
               onChangeText={setPhone}
             />
-            <TouchableOpacity onPress={handleAddAddress} style={{ backgroundColor: 'rgba(90, 58, 137, 1)', padding: 15, borderRadius: 5, alignItems: 'center' }}>
+            <TouchableOpacity onPress={handleAddAddress} style={{ backgroundColor: 'rgba(90, 58, 137, 1)', padding: 15, borderRadius: 5, alignItems: 'center',position:'relative',bottom:moderateScaleVertical(10) }}>
               <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Save</Text>
             </TouchableOpacity>
           </View>
