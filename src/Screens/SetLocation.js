@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, Image, TextInput, Modal, ScrollView  } from 'react-native';
 import MapView, { Marker, AnimatedRegion } from 'react-native-maps';
 import Geocoder from 'react-native-geocoding';
 import { moderateScale, moderateScaleVertical } from './src/styles/responsiveSize';
@@ -12,6 +12,8 @@ const App = () => {
   const [newAddress, setNewAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [name, setname] = useState('');
+  const [addresses, setAddresses] = useState([
+  ]);
   const [state, setState] = useState({
     region: {
       latitude: 19.3919,
@@ -136,8 +138,8 @@ const App = () => {
           identifier='origin'
         />
       </MapView>
-      <View style={{ flexDirection: 'column', backgroundColor: 'rgba(255, 255, 255, 1)' }}>
-        <View style={{ marginTop: moderateScaleVertical(10), flexDirection: 'row', marginBottom: moderateScaleVertical(10) }}>
+      <View style={{ flexDirection: 'column', backgroundColor: 'rgba(255, 255, 255, 1)',height:'100%'}}>
+        <View style={{ marginTop: moderateScaleVertical(10), flexDirection: 'row', marginBottom: moderateScaleVertical(10),marginLeft:moderateScale(20) }}>
           <Image source={require('./assets/fi-ss-marker.png')} style={{ height: moderateScaleVertical(30), width: moderateScale(30), tintColor: 'rgba(90, 58, 137, 1)' }} />
           <View style={{ marginLeft: moderateScale(20), marginRight: moderateScale(30) }}>
             <Text style={{ marginBottom: 5, fontSize: 17, fontWeight: '600' }}>Home</Text>
@@ -145,10 +147,14 @@ const App = () => {
           </View>
         </View>
         <View style={{ marginTop: moderateScaleVertical(10), elevation: 1 }}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{ backgroundColor: 'rgba(90, 58, 137, 1)', width: moderateScale(250), padding: moderateScale(15), borderRadius: 10, marginTop: moderateScaleVertical(20), alignSelf: 'center', position: 'absolute', bottom: 10 }}
           onPress={() => setModalVisible(true)}
         >
+          <Text style={{ color: '#FFF', fontSize: 16, fontWeight: 'bold', alignSelf: 'center' }}>Add Address</Text>
+        </TouchableOpacity> */}
+         <TouchableOpacity style={{ backgroundColor: 'rgba(90, 58, 137, 1)', width: moderateScale(250), padding: moderateScale(15), borderRadius: 10, alignSelf: 'center' }}
+          onPress={() => setModalVisible(true)}>
           <Text style={{ color: '#FFF', fontSize: 16, fontWeight: 'bold', alignSelf: 'center' }}>Add Address</Text>
         </TouchableOpacity>
         </View>
@@ -156,25 +162,12 @@ const App = () => {
       <Modal animationType="slide" transparent={true} visible={modalVisible} >
     
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)'}}>
-        <View style={{ position:'absolute',top:200}}>
+        <View style={{ position:'absolute' }}>
            <TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 10, alignItems: 'center'  }}>
            <Image source={require('./assets/cancel.png')} style={{ height: moderateScaleVertical(30), width: moderateScale(30), tintColor: 'white' }} />
             </TouchableOpacity>
         </View>
-          <View style={{ width: '100%', backgroundColor: '#FFF', padding: 20, borderRadius: 10 ,height:"70%",position:'absolute',bottom:moderateScaleVertical(0)}}>
-            <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 250, marginBottom: 20 }}>
-              {addresses.map((address) => (
-                <View key={address.id} style={{ zIndex:100,marginBottom: 10,flexDirection:'row' ,gap:moderateScale(10),borderWidth:moderateScale(0.5) ,padding:moderateScale(10)}}>
-                  <Image source={require('./assets/home.png')} style={{ height: moderateScaleVertical(30), width: moderateScale(30), tintColor: 'rgba(218, 152, 55, 1)' }} />
-                  <View style={{gap:moderateScaleVertical(10)}}>
-                  <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{address.name}</Text>
-                  <Text style={{ fontSize: 14, color: '#333' }}>{address.address}</Text>
-                  <Text style={{ fontSize: 14, color: '#333' }}>{address.phone}</Text>
-                  </View>
-                </View>
-              ))}
-            </ScrollView>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 20 }}>Add New Address</Text>
+          <View style={{ width: '100%', backgroundColor: '#FFF', padding: 20, borderRadius: 10 ,height:"45%",position:'absolute',bottom:moderateScaleVertical(0)}}>
             <TextInput
               style={{ borderWidth: 1, borderColor: '#CCC', borderRadius: 5, padding: 10, marginBottom: 20 }}
               placeholder="Enter name"
@@ -183,17 +176,23 @@ const App = () => {
             />
             <TextInput
               style={{ borderWidth: 1, borderColor: '#CCC', borderRadius: 5, padding: 10, marginBottom: 20 }}
-              placeholder="Enter address"
+              placeholder="Enter Bulding Address"
               value={newAddress}
               onChangeText={setNewAddress}
             />
              <TextInput
               style={{ borderWidth: 1, borderColor: '#CCC', borderRadius: 5, padding: 10, marginBottom: 20 }}
-              placeholder="Enter phone"
+              placeholder="Enter Contact Number"
               value={phone}
               onChangeText={setPhone}
             />
-            <TouchableOpacity onPress={handleAddAddress} style={{ backgroundColor: 'rgba(90, 58, 137, 1)', padding: 15, borderRadius: 5, alignItems: 'center' }}>
+              <TextInput
+              style={{ borderWidth: 1, borderColor: '#CCC', borderRadius: 5, padding: 10, marginBottom: 20 }}
+              placeholder="Land Mark"
+              value={phone}
+              onChangeText={setPhone}
+            />
+            <TouchableOpacity onPress={handleAddAddress} style={{ backgroundColor: 'rgba(90, 58, 137, 1)', padding: 15, borderRadius: 5, alignItems: 'center',position:'relative',bottom:moderateScaleVertical(10) }}>
               <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Save</Text>
             </TouchableOpacity>
           </View>
